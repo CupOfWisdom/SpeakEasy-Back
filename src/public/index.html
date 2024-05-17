@@ -1,0 +1,41 @@
+<!-- src/public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload or Download JSON</title>
+</head>
+<body>
+    <h1>Upload or Download JSON File</h1>
+
+    <!-- Upload Form -->
+    <h2>Upload JSON File</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".json" />
+        <button type="submit">Upload</button>
+    </form>
+    <div id="upload-result"></div>
+
+    <!-- Download Link -->
+    <h2>Download JSON File</h2>
+    <a href="/api/download-json" download="emotion_data.json">Download JSON</a>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileField = document.querySelector('input[type="file"]');
+            formData.append('file', fileField.files[0]);
+
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            document.getElementById('upload-result').textContent = JSON.stringify(result);
+        });
+    </script>
+</body>
+</html>
