@@ -3,9 +3,10 @@ import express from 'express';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+import { exec } from 'child_process';
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: 'src/api/uploads/' });
 
 // Endpoint to upload JSON files
 router.post('/upload-json', upload.single('file'), (req, res) => {
@@ -37,16 +38,27 @@ router.get('/download-json', (req, res) => {
     });
 });
 
-// Endpoint to upload video files
+// Endpoint to upload video files and process them
 router.post('/upload-video', upload.single('file'), (req, res) => {
     const tempPath = req.file.path;
-    const targetPath = path.join(process.cwd(), 'src', 'public', 'uploaded_video.mp4');
+    const targetPath = path.join(process.cwd(), 'src', 'api', 'public', 'uploaded_video.mp4');
+    const outputJsonPath = path.join(process.cwd(), 'src', 'api', 'public', 'emotion_data.json');
 
     if (req.file.mimetype.startsWith('video/')) {
         fs.rename(tempPath, targetPath, err => {
             if (err) return res.sendStatus(500);
 
-            res.status(200).json({ message: 'Video file uploaded successfully', filename: req.file.originalname });
+            // Execute the Python script
+            exec(`python3 ./src/model/process_video.py "${targetPath}"`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`exec error: ${error}`);
+                    return res.status(500).json({ message: 'Error processing the video', error });
+                }
+
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+                res.status(200).json({ message: 'Video file uploaded and processed successfully', filename: req.file.originalname });
+            });
         });
     } else {
         fs.unlink(tempPath, err => {
@@ -59,7 +71,7 @@ router.post('/upload-video', upload.single('file'), (req, res) => {
 
 // Endpoint to download the video file
 router.get('/download-video', (req, res) => {
-    const filePath = path.join(process.cwd(), 'src', 'public', 'uploaded_video.mp4');
+    const filePath = path.join(process.cwd(), 'src', 'api', 'public', 'uploaded_video.mp4');
     res.download(filePath, 'uploaded_video.mp4', (err) => {
         if (err) {
             res.status(500).send('Error downloading the file');

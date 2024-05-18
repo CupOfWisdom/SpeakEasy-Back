@@ -1,2 +1,6 @@
 .venv/
 node_modules/
+src/api/uploads
+src/api/public/emotion_data.json
+
+*.mp4
