@@ -4,37 +4,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload or Download JSON</title>
+    <title>Upload or Download JSON and Video Files</title>
 </head>
 <body>
-    <h1>Upload or Download JSON File</h1>
+    <h1>Upload or Download JSON and Video Files</h1>
 
-    <!-- Upload Form -->
+    <!-- Upload JSON Form -->
     <h2>Upload JSON File</h2>
-    <form id="uploadForm" enctype="multipart/form-data">
+    <form id="uploadJsonForm" enctype="multipart/form-data">
         <input type="file" name="file" accept=".json" />
-        <button type="submit">Upload</button>
+        <button type="submit">Upload JSON</button>
     </form>
-    <div id="upload-result"></div>
+    <div id="upload-json-result"></div>
 
-    <!-- Download Link -->
-    <h2>Download JSON File</h2>
-    <a href="/api/download-json" download="emotion_data.json">Download JSON</a>
+    <!-- Upload Video Form -->
+    <h2>Upload Video File</h2>
+    <form id="uploadVideoForm" enctype="multipart/form-data">
+        <input type="file" name="file" accept="video/*" />
+        <button type="submit">Upload Video</button>
+    </form>
+    <div id="upload-video-result"></div>
+
+    <!-- Download Links -->
+    <h2>Download Files</h2>
+    <a href="/api/download-json" download="emotion_data.json">Download JSON</a><br>
+    <a href="/api/download-video" download="uploaded_video.mp4">Download Video</a>
 
     <script>
-        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+        document.getElementById('uploadJsonForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             const formData = new FormData();
-            const fileField = document.querySelector('input[type="file"]');
+            const fileField = document.querySelector('input[type="file"][name="file"]');
             formData.append('file', fileField.files[0]);
 
-            const response = await fetch('/api/upload', {
+            const response = await fetch('/api/upload-json', {
                 method: 'POST',
                 body: formData
             });
 
             const result = await response.json();
-            document.getElementById('upload-result').textContent = JSON.stringify(result);
+            document.getElementById('upload-json-result').textContent = JSON.stringify(result);
+        });
+
+        document.getElementById('uploadVideoForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileField = document.querySelector('input[type="file"][name="file"]');
+            formData.append('file', fileField.files[0]);
+
+            const response = await fetch('/api/upload-video', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            document.getElementById('upload-video-result').textContent = JSON.stringify(result);
         });
     </script>
 </body>
