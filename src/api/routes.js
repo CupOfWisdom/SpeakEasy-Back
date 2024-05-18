@@ -30,7 +30,7 @@ router.post('/upload-json', upload.single('file'), (req, res) => {
 
 // Endpoint to download the JSON file
 router.get('/download-json', (req, res) => {
-    const filePath = path.join(process.cwd(), 'src', 'public', 'emotion_data.json');
+    const filePath = path.join(process.cwd(), 'src', 'api', 'public', 'emotion_data.json');
     res.download(filePath, 'emotion_data.json', (err) => {
         if (err) {
             res.status(500).send('Error downloading the file');
