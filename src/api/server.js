@@ -2,7 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import apiRoutes from './api/routes.js';
+import apiRoutes from './routes';
 
 const app = express();
 const port = 3000;
