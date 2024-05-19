@@ -1,14 +1,18 @@
 // src/server.js
 import express from 'express';
+import cors from 'cors';
 import path from 'path';
-import apiRoutes from './routes.js';
+import apiRoutes from './api/routes.js';
 
 const app = express();
 const port = 3000;
 
+// Enable CORS
+app.use(cors());
+
 // Serve the index.html file at the root endpoint
 app.get('/', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'src', 'api', 'public', 'index.html'));
+    res.sendFile(path.join(process.cwd(), 'src', 'public', 'index.html'));
 });
 
 app.use('/api', apiRoutes);

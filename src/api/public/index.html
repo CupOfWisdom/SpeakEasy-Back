@@ -12,7 +12,7 @@
     <!-- Upload JSON Form -->
     <h2>Upload JSON File</h2>
     <form id="uploadJsonForm" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".json" />
+        <input type="file" name="jsonFile" accept=".json" />
         <button type="submit">Upload JSON</button>
     </form>
     <div id="upload-json-result"></div>
@@ -20,7 +20,7 @@
     <!-- Upload Video Form -->
     <h2>Upload Video File</h2>
     <form id="uploadVideoForm" enctype="multipart/form-data">
-        <input type="file" name="file" accept="video/*" />
+        <input type="file" name="videoFile" accept="video/*" />
         <button type="submit">Upload Video</button>
     </form>
     <div id="upload-video-result"></div>
@@ -31,10 +31,11 @@
     <a href="/api/download-video" download="uploaded_video.mp4">Download Video</a>
 
     <script>
+        // Upload JSON File
         document.getElementById('uploadJsonForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             const formData = new FormData();
-            const fileField = document.querySelector('input[type="file"][name="file"]');
+            const fileField = document.querySelector('input[name="jsonFile"]');
             formData.append('file', fileField.files[0]);
 
             const response = await fetch('/api/upload-json', {
@@ -46,10 +47,11 @@
             document.getElementById('upload-json-result').textContent = JSON.stringify(result);
         });
 
+        // Upload Video File
         document.getElementById('uploadVideoForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             const formData = new FormData();
-            const fileField = document.querySelector('input[type="file"][name="file"]');
+            const fileField = document.querySelector('input[name="videoFile"]');
             formData.append('file', fileField.files[0]);
 
             const response = await fetch('/api/upload-video', {
