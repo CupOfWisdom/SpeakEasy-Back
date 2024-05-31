@@ -8,9 +8,14 @@ import numpy as np
 import json
 import sys
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+face_cascade_path = os.path.join(script_dir, 'model_data', 'haarcascade_frontalface_default.xml')
+model_path = os.path.join(script_dir, 'model_data', 'model.h5')
+
 # Load the face detection and emotion classification models
-face_classifier = cv2.CascadeClassifier('/home/zorimech/.code/uni/tcc/speakeasy/src/model/model_data/haarcascade_frontalface_default.xml')
-classifier = load_model('/home/zorimech/.code/uni/tcc/speakeasy/src/model/model_data/model.h5')
+face_classifier = cv2.CascadeClassifier(face_cascade_path)
+classifier = load_model(model_path)
 
 # Define the emotion labels
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
@@ -94,7 +99,8 @@ for second in emotion_count:
     })
 
 # Save emotion data to JSON file
-output_path = os.path.join('/home/zorimech/.code/uni/tcc/speakeasy/src/api/public/json', 'emotion_data.json')
+relative_output_path = os.path.join('public', 'json', 'emotion_data.json')
+output_path = os.path.join(f'{script_dir}/../api/', relative_output_path)
 with open(output_path, 'w') as json_file:
     json.dump(emotion_data, json_file, indent=4)
 

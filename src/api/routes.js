@@ -30,10 +30,10 @@ router.post('/upload-json', upload.single('file'), (req, res) => {
 
 // Endpoint to download the JSON file
 router.get('/download-json', (req, res) => {
-    const filePath = path.join(process.cwd(), 'src', 'api', 'public', 'emotion_data.json');
+    const filePath = path.join(process.cwd(), 'src', 'api', 'public', 'json', 'emotion_data.json');
     res.download(filePath, 'emotion_data.json', (err) => {
         if (err) {
-            res.status(500).send('Error downloading the file');
+            res.status(500).json({ message: 'Error downloading the file', err });
         }
     });
 });
@@ -54,6 +54,7 @@ router.post('/upload-video', upload.single('file'), (req, res) => {
             res.status(200).json({ message: 'Video file uploaded successfully, processing started', filename: req.file.originalname });
 
             // Process the video asynchronously
+            console.log("Video received successfully! Processing...")
             exec(`TF_ENABLE_ONEDNN_OPTS=0 python3 ./src/model/process_video.py "${targetPath}"`, (error, stdout, stderr) => {
                 if (error) {
                     console.error('Execution error:', error);
