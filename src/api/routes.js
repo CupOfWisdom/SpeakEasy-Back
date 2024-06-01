@@ -31,12 +31,23 @@ router.post('/upload-json', upload.single('file'), (req, res) => {
 // Endpoint to download the JSON file
 router.get('/download-json', (req, res) => {
     const filePath = path.join(process.cwd(), 'src', 'api', 'public', 'json', 'emotion_data.json');
-    res.download(filePath, 'emotion_data.json', (err) => {
-        if (err) {
-            res.status(500).json({ message: 'Error downloading the file', err });
+  
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          return res.status(404).json({ error: 'Processing video. Wait some time and try again.' });
+        } else {
+          return res.status(500).json({ error: 'Error checking file existence' });
         }
+      }
+  
+      res.download(filePath, (err) => {
+        if (err) {
+          return res.status(500).json({ error: 'Error downloading file' });
+        }
+      });
     });
-});
+  });
 
 // Endpoint to upload video files and process them
 router.post('/upload-video', upload.single('file'), (req, res) => {
@@ -51,6 +62,10 @@ router.post('/upload-video', upload.single('file'), (req, res) => {
             }
 
             // Return response immediately
+            fs.rmSync("./public/json/e", {
+                force: true,
+            });
+
             res.status(200).json({ message: 'Video file uploaded successfully, processing started', filename: req.file.originalname });
 
             // Process the video asynchronously
